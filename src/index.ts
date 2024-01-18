@@ -1,6 +1,16 @@
 import express from "express";
+import { routeUser } from "./Routes/users.routes";
+require("dotenv").config();
+
 
 const app = express();
-const port = 5500;
+const PORT = process.env["PORT"];
 
-app.listen(port, () => console.log(`Escuchando al puerto ${port}`));
+app.use(express.json());
+app.use("", routeUser)
+
+
+
+const server = app.listen(PORT, () => {
+    const{ port } = server.address() as any; 
+    console.log(`Escuchando al puerto ${port}`)});
