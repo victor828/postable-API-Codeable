@@ -1,6 +1,6 @@
 /** @format */
 
-export type Posts = {
+export type PostsModel = {
   id: string;
   userId: string;
   content: string;
@@ -8,4 +8,4 @@ export type Posts = {
   updateAt: string;
 };
 
-export type post = Omit<Posts, "id">;
+export type postModel = Omit<PostsModel, "id">;
