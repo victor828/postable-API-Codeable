@@ -1,3 +1,5 @@
+/** @format */
+
 import { Pool } from "pg";
 require("dotenv").config();
 
@@ -9,7 +11,8 @@ export const pool = new Pool({
   port: 5432,
 });
 
-export const query = (text: string, params?: string[]) => {
+
+export const query = (text: string, params?: (string | number | boolean)[]) => {
   return pool.query(text, params);
 };
 
