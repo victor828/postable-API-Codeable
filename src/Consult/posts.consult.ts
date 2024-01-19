@@ -24,21 +24,17 @@ class Posts {
   }
 
   async createPost(data: postModel) {
-    // TODO: agregar la fecha de creacion, crear una funcion que nos de la fecha del momento
-    // const consult = `INSERT INTO posts (userId, content, createAt, updateAt)
     const consult = `INSERT INTO posts (userId, content)
-       VALUES (1, $1) RETURNING *`;
-    // VALUES ($1, $2, $3, $4)`;
-
+    VALUES (1, $1) RETURNING *`;
     const result = await pool.query(consult, [
       //   data.userId,
-      data.content
+      data.content,
     ]);
     return result.rows[0];
   }
 
   async updatePost(data: PostsModel) {
-    // TODO: actualizar la fecha de modificacion
+    // TODO: las fechas se crear automaticamente, como modific la fecha actual
     const consult = `UPDATE posts SET content = $1 , updateAt = $2 WHERE id = $3`;
     const result = await pool.query(consult, [data.content, fecha, data.id]);
     return result.rows[0];
