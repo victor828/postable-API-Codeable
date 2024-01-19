@@ -19,6 +19,11 @@ class Posts {
     return post.ok ? res.status(201).json(post) : res.status(400).json(post);
   }
 
+  async getByUser(req: Request, res: Response) {
+    const user = req.params["username"];
+    const data = await service_Post.getPostByUser(user);
+    return data.ok ? res.status(200).json(data) : res.status(400).json(data);
+  }
 }
 
 export const controller_Post = new Posts();
