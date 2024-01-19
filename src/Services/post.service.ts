@@ -1,7 +1,7 @@
 /** @format */
 
 import { consult_Posts } from "../Consult/posts.consult";
-import { PostsModel } from "../Models/user.model";
+import { PostsModel } from "../Models/posts.model";
 
 class Posts {
   async getAll() {
