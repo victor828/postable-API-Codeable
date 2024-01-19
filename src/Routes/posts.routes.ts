@@ -7,3 +7,6 @@ import { controller_Post } from "../Controllers/posts.controller";
 export const routePosts = express.Router();
 
 routePosts.get("/", controller_Post.getAll);
+// routePosts.get("/:id", controller_Post.getById);
+routePosts.post("/", controller_Post.create);
+// routePosts.put("/:id", controller_Post.update);

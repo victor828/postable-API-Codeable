@@ -1,6 +1,7 @@
 /** @format */
 
 import { pool } from "../Db/db";
+import { post } from "../Models/user.model";
 
 class Posts {
   async getPosts() {
@@ -14,6 +15,14 @@ class Posts {
     const result = await pool.query(consult, [id]);
     return result.rows[0];
   }
+
+  async createPost(data: post) {
+    const consult = `INSERT INTO posts (userId, content) VALUES ($1, $2)`;
+    const result = await pool.query(consult, [data.userId, data.content]);
+    return result.rows[0];
+  }
+    
+    
 }
 
 export const consult_Posts = new Posts();
