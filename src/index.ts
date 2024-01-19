@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env["PORT"];
 
 app.use(express.json());
-app.use("", routeUser)
+app.use("/users", routeUser)
 
 
 
