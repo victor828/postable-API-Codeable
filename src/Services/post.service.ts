@@ -1,6 +1,7 @@
 /** @format */
 
 import { consult_Posts } from "../Consult/posts.consult";
+import { users_Consults } from "../Consult/users.consults";
 import { PostsModel } from "../Models/posts.model";
 
 class Posts {
@@ -18,8 +19,18 @@ class Posts {
   }
 
   async getPostByUser(user: string) {
-    const post = await consult_Posts.getPost(user);
-    return post
+    /* 
+    1- verificar que el usuario existe
+    2- si existe tomamos si id
+    3- tomamos todos lo spost que le pertenescan al post
+    */
+    const userExist = users_Consults.getUserByName(user);
+    console.log(`service user ${userExist}`);
+    if (!userExist) return { ok: false, message: "El usuario no existe" };
+
+    // const post = await consult_Posts.getPost(userExist.id);
+    // return post
+    return userExist
       ? { ok: true, message: "Posts found", data: post }
       : { ok: false, message: "Posts not found", data: null };
   }
