@@ -21,8 +21,17 @@ class Posts {
 
   async getByUser(req: Request, res: Response) {
     const user = req.params["username"];
-    const data = await service_Post.getPostByUser(user);
+    const data = await service_Post.getByUser(user);
     return data.ok ? res.status(200).json(data) : res.status(400).json(data);
+  }
+
+  async update(req: Request, res: Response) {
+    const { id } = req.params;
+    const data = req.body;
+    const response = await service_Post.update(data, id);
+    return response.ok
+      ? res.status(200).json(response)
+      : res.status(400).json(response);
   }
 }
 
