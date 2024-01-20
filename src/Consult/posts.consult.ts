@@ -3,7 +3,11 @@ import { PostsModel, postModel } from "../Models/posts.model";
 // console.log(`---> consultas: ${result}`);
 class Posts {
   async getPosts() {
-    const consult = `SELECT * FROM posts ORDER BY createdat`;
+    // const consult = `SELECT * FROM posts ORDER BY createdat`;
+       const consult = `SELECT p.*, Count(l.id) as likescount 
+      FROM posts as p
+      LEFT JOIN likes as l ON l.postid = p.id
+      GROUP BY p.id;`;
     const result = await pool.query(consult);
     return result.rows;
   }
