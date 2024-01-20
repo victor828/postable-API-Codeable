@@ -1,8 +1,8 @@
 /** @format */
 
 import { pool } from "../Db/db";
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-import jwt from "jsonwebtoken";
 import { User, user } from "../Models/users.models";
 
 const jwtSecret = "5uper53cr3t";
@@ -14,7 +14,7 @@ class UsersConsults {
     const result = await pool.query(consult);
     return result.rows;
   }
-  async getUser(user: User): Promise<User> {
+  async getUser(user: User) {
     const consult = `SELECT * FROM users WHERE id = $1`;
     const result = await pool.query(consult, [user.id]);
     return result.rows;
@@ -66,7 +66,7 @@ class UsersConsults {
   //! logeo
 
   async login(data: user) {
-    const userFromBb = await this.getUserByName(data);
+    const userFromBb = await this.getUserByName(data.userName);
     const checkPassword = await bcrypt.compare(
       data.password,
       userFromBb.password
@@ -97,4 +97,4 @@ class UsersConsults {
   }
 }
 
-export const users_Consults = new UsersConsults();
+export const consults_Users = new UsersConsults();
