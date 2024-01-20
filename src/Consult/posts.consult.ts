@@ -1,8 +1,6 @@
-/** @format */
-
 import { pool } from "../Db/db";
 import { PostsModel, postModel } from "../Models/posts.model";
-import { fecha } from "../Utils/utils";
+// console.log(`---> consultas: ${result}`);
 
 class Posts {
   async getPosts() {
@@ -11,10 +9,10 @@ class Posts {
     return result.rows;
   }
 
-  async getPost(id: string) {
-    const consult = `SELECT * FROM posts WHERE id = $1`;
+  async getPostId(id: string) {
+    const consult = `SELECT * FROM posts WHERE userid = $1`;
     const result = await pool.query(consult, [id]);
-    return result.rows[0];
+    return result.rows;
   }
 
   async getPostByUser(user: string) {
@@ -26,6 +24,8 @@ class Posts {
   async createPost(data: postModel) {
     const consult = `INSERT INTO posts (userId, content)
     VALUES (1, $1) RETURNING *`;
+    // ! el valor 1 corresponde al usurio logueado
+    // TODO: sera cambiado mas adelante por la optencion del id correto
     const result = await pool.query(consult, [
       //   data.userId,
       data.content,
@@ -33,10 +33,11 @@ class Posts {
     return result.rows[0];
   }
 
-  async updatePost(data: PostsModel) {
-    // TODO: las fechas se crear automaticamente, como modific la fecha actual
-    const consult = `UPDATE posts SET content = $1 , updateAt = $2 WHERE id = $3`;
-    const result = await pool.query(consult, [data.content, fecha, data.id]);
+  async updatePost(data: PostsModel, id: string) {
+    const consult = `UPDATE posts SET content = $1 , updatedat = NOW() WHERE id = $2 RETURNING *`;
+    const result = await pool.query(consult, [data.content, id]);
+    console.log(`---> consultas: ${JSON.stringify(result.rows[0])}`);
+
     return result.rows[0];
   }
 
