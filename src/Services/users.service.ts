@@ -1,5 +1,8 @@
+/** @format */
+
 import { consult_Posts } from "../Consult/posts.consult";
 import { consults_Users } from "../Consult/users.consults";
+import { user } from "../Models/users.models";
 
 class Users {
   async getAll() {
@@ -17,6 +20,21 @@ class Users {
     return response
       ? { ok: true, data: response }
       : { ok: false, data: response };
+  }
+
+  async login(dataUser: user) {
+    await consults_Users.login(dataUser);
+  }
+
+  async regiser(dataUser: user) {
+    const user = await consults_Users.getUserByName(dataUser.userName);
+    if (user)
+      return { ok: false, message: `El usuario ya existe ${user.username}` };
+    const registro = await consults_Users.registerUser(dataUser);
+
+    return registro
+      ? { ok: true, message: `Se registro usuario con exito`, data: registro }
+      : { ok: false, message: "no se pudo registrar el usuario", data: registro };
   }
 }
 
