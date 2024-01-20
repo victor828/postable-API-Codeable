@@ -28,7 +28,14 @@ class UsersConsults {
   async registerUser(data: user) {
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
-    const consult = `INSERT INTO users(username, password,email, firstname, lastname, role)
+    const consult = `INSERT INTO users(
+      username,
+      password,
+      email,
+      firstname,
+      lastname,
+      role
+      )
     VALUES($1,$2,$3,$4,$5) RETURNING *`;
     const values = [
       data.userName,
@@ -41,23 +48,30 @@ class UsersConsults {
     const res = await pool.query(consult, values);
     console.log("Estamos en consulst 2: " + JSON.stringify(res.rows));
 
-    return res.rows;
+    return res.rows[0];
   }
   async updateUser(data: user, id: string) {
-    const consult = `UPDATE users SET username = $1, password = $2, role = $3, email = $4, firstname = $5, lastname = $6 
+    const consult = `UPDATE users SET 
+    username = $1,
+    password = $2,
+    email = $3,
+    firstname = $4,
+    lastname = $5,
+    role = $6
     WHERE id = $7 RETURNING *`;
     const values = [
       data.userName,
       data.password,
-      data.role,
       data.email,
       data.firstName,
       data.lastName,
+      data.role,
       id,
     ];
     const res = await pool.query(consult, values);
     return res.rows;
   }
+
   async deleteUser(id: string) {
     const consult = `DELETE FROM users WHERE id = $1`;
     await pool.query(consult, [id]);
