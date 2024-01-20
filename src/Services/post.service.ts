@@ -1,3 +1,4 @@
+import { consult_Likes } from "../Consult/likes.consult";
 import { consult_Posts } from "../Consult/posts.consult";
 import { consults_Users } from "../Consult/users.consults";
 import { PostsModel } from "../Models/posts.model";
@@ -13,8 +14,8 @@ class Posts {
 
   async getByUser(user: string) {
     const { id } = await consults_Users.getUserByName(user); //! <--- no sera necesario una vez tengamos la autentificacion neesitamos crear una variable con el id del user
-    const response = await consult_Posts.getPostId(id);
-    return response
+    const response = await consult_Posts.getPostUserId(id);
+    return response[0]
       ? { ok: true, data: response }
       : { ok: false, data: response };
   }
@@ -28,10 +29,18 @@ class Posts {
   }
 
   async update(data: PostsModel, id: string) {
+    const exist = await consult_Posts.getPostId(id);
+    if (!exist) return { ok: false, message: "Post not found", data: null };
     const updatedPost = await consult_Posts.updatePost(data, id);
+    const likes = await consult_Likes.getLikes(id);
     return updatedPost
-      ? { ok: true, message: "Post created", data: updatedPost }
-      : { ok: false, message: "Post not created", data: updatedPost };
+      ? {
+          ok: true,
+          message: "Post updated",
+          data: updatedPost,
+          likesCount: likes.length
+        }
+      : { ok: false, message: "Post not updated", data: updatedPost };
   }
 
   //   async deletePost(id) {
