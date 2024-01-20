@@ -10,7 +10,7 @@ const PORT = process.env["PORT"];
 app.use(express.json());
 app.use("/me", routeUser);
 app.use("/", routePosts);
-app.use("posts/:postId/likes", likesRouter);
+app.use("/posts", likesRouter);
 
 const server = app.listen(PORT, () => {
   const { port } = server.address() as any;
