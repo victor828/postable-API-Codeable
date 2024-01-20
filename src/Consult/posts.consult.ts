@@ -1,18 +1,36 @@
 import { pool } from "../Db/db";
 import { PostsModel, postModel } from "../Models/posts.model";
 // console.log(`---> consultas: ${result}`);
-
 class Posts {
   async getPosts() {
-    const consult = `SELECT * FROM posts`;
+    const consult = `SELECT * FROM posts ORDER BY createdat`;
     const result = await pool.query(consult);
     return result.rows;
   }
-
-  async getPostId(id: string) {
-    const consult = `SELECT * FROM posts WHERE userid = $1`;
+  // * funciona
+  async getPostUserId(id: string) {
+    // const consult = `SELECT * FROM posts WHERE userid = $1`;
+    const consult = `SELECT p.*, Count(l.id) as likescount 
+      FROM posts as p
+      LEFT JOIN likes as l ON l.postid = p.id
+      WHERE p.userid = $1
+      GROUP BY p.id;`;
     const result = await pool.query(consult, [id]);
+    // console.log(`---> consultas post ${JSON.stringify(result.rows)}`);
     return result.rows;
+  }
+
+  async getPostId(id: string): Promise<postModel> {
+    console.log(`---> consultas: ${id}`);
+    // const consult = `SELECT * FROM posts WHERE id = $1`;
+    const consult = `SELECT p.*, Count(l.id) as likescount 
+      FROM posts as p
+      LEFT JOIN likes as l ON l.postid = p.id
+      WHERE p.id = $1
+      GROUP BY p.id;`;
+    const result = await pool.query(consult, [id]);
+    console.log(`---> consultas post ${JSON.stringify(result.rows[0])}`);
+    return result.rows[0];
   }
 
   async getPostByUser(user: string) {
@@ -34,11 +52,16 @@ class Posts {
   }
 
   async updatePost(data: PostsModel, id: string) {
+    // const consult = `UPDATE posts SET content = $1 , updatedat = NOW() WHERE id = $2 RETURNING *`;
     const consult = `UPDATE posts SET content = $1 , updatedat = NOW() WHERE id = $2 RETURNING *`;
-    const result = await pool.query(consult, [data.content, id]);
-    console.log(`---> consultas: ${JSON.stringify(result.rows[0])}`);
-
-    return result.rows[0];
+    try {
+      const result = await pool.query(consult, [data.content, id]);
+      console.log(`---> consultas: ${JSON.stringify(result.rows[0])}`);
+      return result.rows;
+    } catch (error) {
+      console.error("Error al ejecutar la consulta:", error);
+      throw error;
+    }
   }
 
   async deletePost(data: PostsModel) {
