@@ -11,9 +11,9 @@ class Posts {
     } catch (error) {
       console.log(error);
       return res.status(500).json({
-      ok: false,
-      message: "Internal server error",
-    });
+        ok: false,
+        message: "Internal server error",
+      });
     }
   }
 
@@ -21,7 +21,7 @@ class Posts {
     const data = req.body;
     const userId = req.userId;
     const post = await service_Post.createPost(data, userId);
-    return post.ok ? res.status(200).json(post) : res.status(400).json(post);
+    return post.ok ? res.status(200).json(post) : res.status(401).json(post);
   }
 
   async getByUser(req: Request, res: Response) {
