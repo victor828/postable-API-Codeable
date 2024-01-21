@@ -4,6 +4,7 @@ import { pool } from "../Db/db";
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 import { user } from "../Models/users.models";
+import { updateQuery } from "../Utils/utils";
 
 const jwtSecret = "5uper53cr3t";
 // process.env["SECRET"]
@@ -22,6 +23,7 @@ class UsersConsults {
       };
     }
   }
+
   async getUser(user_id: string) {
     const consult = `SELECT * FROM users WHERE id = $1`;
     try {
@@ -35,6 +37,60 @@ class UsersConsults {
       };
     }
   }
+
+  async updateUser(data: user, id: string) {
+    const consult1 = `UPDATE users SET `;
+    const consult2 = updateQuery(data);
+
+    const consult3 = `,updatedat = NOW() 
+                   WHERE id = $1 
+                   RETURNING *`;
+    const consult = consult1 + consult2 + consult3;
+    console.log(`----> consulta 😎😎😎🦖🦖🦖🦖${consult}`);
+
+    try {
+      const response = await pool.query(consult, [id]);
+      return response.rows;
+    } catch (error) {
+      console.error(error);
+      return {
+        message: error,
+      };
+    }
+  }
+
+  // async updateUser(data: user, id: string) {
+  //   const consult = `UPDATE users
+  //                  SET username = $1,
+  //                      email = $2,
+  //                      firstname = $3,
+  //                      lastname = $4,
+  //                      updateat = NOW()
+  //                  WHERE id = $5
+  //                  RETURNING *`;
+  //   const values = [
+  //     data.username,
+  //     data.email,
+  //     data.firstname,
+  //     data.lastname,
+  //     id,
+  //   ];
+  //   try {
+  //     const response = await pool.query(consult, values);
+  //     return response.rows;
+  //   } catch (error) {
+  //     console.error(error);
+  //     return {
+  //       message: error,
+  //     };
+  //   }
+  // }
+
+  // async deleteUser (id: string) {
+  //   const consult = `DELETE FROM users WHERE id = $1`;
+  //   await pool.query(consult, [id]);
+  // }
+
   async getUserByName(user: string) {
     const consult = `SELECT * FROM users WHERE username = $1`;
     try {
@@ -50,8 +106,6 @@ class UsersConsults {
   }
 
   async registerUser(data: user) {
-    console.log("----> Estamos en register consult : " + JSON.stringify(data));
-
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const consult = `INSERT INTO users(
       username,
@@ -72,9 +126,6 @@ class UsersConsults {
     ];
     try {
       const res = await pool.query(consult, values);
-      console.log(
-        "----> Estamos en register consult 2 : " + JSON.stringify(res.rows)
-      );
 
       return res.rows[0];
     } catch (error) {
@@ -82,36 +133,6 @@ class UsersConsults {
       return {
         ok: false,
         message: " (❁´◡`❁) ---> " + error,
-      };
-    }
-  }
-
-  async updateUser(data: user, id: string) {
-    const consult = `UPDATE users SET 
-    username = $1,
-    password = $2,
-    email = $3,
-    firstname = $4,
-    lastname = $5,
-    role = $6
-    WHERE id = $7 RETURNING *`;
-    const values = [
-      data.username,
-      data.password,
-      data.email,
-      data.firstname,
-      data.lastname,
-      data.role,
-      id,
-    ];
-    try {
-      const res = await pool.query(consult, values);
-      return res.rows;
-    } catch (error) {
-      console.log(error);
-      return {
-        ok: false,
-        message: "Error",
       };
     }
   }
@@ -124,12 +145,10 @@ class UsersConsults {
       console.log(error);
       return {
         ok: false,
-        message: "Error",
+        message: "Error" + error,
       };
     }
   }
-
-  //! logeo
 
   async login(data: user) {
     const userFromBb = await this.getUserByName(data.username);
@@ -149,14 +168,12 @@ class UsersConsults {
 
     if (checkPassword) {
       const data = {
-        ok: true,
-        user: userFromBb,
+        // user: userFromBb,
         token: token,
       };
       return data;
     } else {
       return {
-        ok: false,
         message: "Error",
       };
     }
