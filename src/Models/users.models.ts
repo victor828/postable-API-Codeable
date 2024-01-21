@@ -2,14 +2,14 @@
 
 export type User = {
   id: string;
-  userName: string;
+  username: string;
   password: string;
   email: string;
-  firstName: string;
-  lastName: string;
+  firstname: string;
+  lastname: string;
   role: string;
-  createAt: string;
-  updateAt: string;
+  createat: string;
+  updateat: string;
 };
 
 export type user = Omit<User, "id">;
