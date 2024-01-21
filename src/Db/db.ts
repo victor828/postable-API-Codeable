@@ -1,5 +1,3 @@
-/** @format */
-
 import { Pool } from "pg";
 require("dotenv").config();
 
