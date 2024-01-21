@@ -13,9 +13,26 @@ class Likes {
   }
 
   async deleteLike(id: string, userid: string) {
-    const consult = `delete from likes where postid = $1 & userid = $2 returning *`;
+    const consult = `DELETE FROM likes
+      WHERE postid = $1 AND userid = $2
+      RETURNING *;
+      `;
     try {
       const response = await pool.query(consult, [id, userid]);
+      return response.rows;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
+
+  async deleteLikes(userid: string) {
+    const consult = `DELETE FROM likes
+      WHERE userid = $1
+      RETURNING *;
+      `;
+    try {
+      const response = await pool.query(consult, [userid]);
       return response.rows;
     } catch (error) {
       console.log(error);
