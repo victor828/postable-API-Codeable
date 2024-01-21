@@ -8,7 +8,8 @@ class Posts {
 FROM posts AS p
 LEFT JOIN users AS u ON p.userid = u.id
 LEFT JOIN likes AS l ON l.postid = p.id
-GROUP BY p.id, u.username`;
+GROUP BY p.id, u.username
+ORDER BY createdat`;
     try {
       const result = await pool.query(consult);
       return result.rows;
@@ -23,11 +24,11 @@ GROUP BY p.id, u.username`;
 
   async getPostUserId(id: string) {
     const consult = `SELECT p.*, u.username, COUNT(l.id) AS likesCount
-FROM posts AS p
-LEFT JOIN users AS u ON p.userid = u.id
-LEFT JOIN likes AS l ON l.postid = p.id
-WHERE p.userid = $1
-GROUP BY p.id, u.username`;
+      FROM posts AS p
+      LEFT JOIN users AS u ON p.userid = u.id
+      LEFT JOIN likes AS l ON l.postid = p.id
+      WHERE p.userid = $1
+      GROUP BY p.id, u.username`;
     try {
       const result = await pool.query(consult, [id]);
       return result.rows;
@@ -47,8 +48,9 @@ GROUP BY p.id, u.username`;
 FROM posts AS p
 LEFT JOIN users AS u ON p.userid = u.id
 LEFT JOIN likes AS l ON l.postid = p.id
+WHERE p.id = $1
 GROUP BY p.id, u.username
-WHERE p.id = $1`;
+`;
     try {
       const result = await pool.query(consult, [id]);
       return result.rows[0];
@@ -66,8 +68,9 @@ WHERE p.id = $1`;
       FROM posts AS p
       LEFT JOIN users AS u ON p.userid = u.id
       LEFT JOIN likes AS l ON l.postid = p.id
+      WHERE u.username = $1
       GROUP BY p.id, u.username
-      WHERE u.username = $1`;
+      `;
     try {
       const result = await pool.query(consult, [user]);
       return result.rows[0];
@@ -111,6 +114,17 @@ WHERE p.id = $1`;
     const consult = `DELETE FROM posts WHERE id = $1`;
     try {
       const result = await pool.query(consult, [data.id]);
+      return result.rows[0];
+    } catch (error) {
+      console.error("Error al ejecutar la consulta:", error);
+      throw error;
+    }
+  }
+
+  async deletePostOfUser(user_id: string) {
+    const consult = `DELETE FROM posts WHERE userid = $1`;
+    try {
+      const result = await pool.query(consult, [user_id]);
       return result.rows[0];
     } catch (error) {
       console.error("Error al ejecutar la consulta:", error);
