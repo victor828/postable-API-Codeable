@@ -23,18 +23,27 @@ class Users {
   }
 
   async login(dataUser: user) {
-    await consults_Users.login(dataUser);
+    const response = await consults_Users.login(dataUser);
+    return response
+      ? { ok: true, data: response }
+      : { ok: false, data: response };
   }
 
   async regiser(dataUser: user) {
-    const user = await consults_Users.getUserByName(dataUser.userName);
+    const user = await consults_Users.getUserByName(dataUser.username);
     if (user)
       return { ok: false, message: `El usuario ya existe ${user.username}` };
     const registro = await consults_Users.registerUser(dataUser);
-
-    return registro
+    console.log("----> Estamos en *** : " + JSON.stringify(registro));
+    return registro.ok === false
+      ? { ok: false, message: registro.message, data: registro }
+      : registro
       ? { ok: true, message: `Se registro usuario con exito`, data: registro }
-      : { ok: false, message: "no se pudo registrar el usuario", data: registro };
+      : {
+          ok: false,
+          message: "no se pudo registrar el usuario",
+          data: registro,
+        };
   }
 }
 
