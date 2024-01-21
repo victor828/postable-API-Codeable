@@ -1,28 +1,31 @@
 import { pool } from "../Db/db";
 
 class Likes {
-  async newLike(id: string) {
+  async newLike(id: string, userid: string) {
     const consult = `insert into likes (postid, userid) values($1,$2) returning *`;
-    const response = await pool.query(consult, [id, 1]);
-    console.log(`---> create like: ${JSON.stringify(response.rows)}`);
-
-    return response.rows;
+    try {
+      const response = await pool.query(consult, [id, userid]);
+      return response.rows;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
   }
 
-  async deleteLike(id: string) {
-    //   async deleteLike(id: string, userid: string) {
-    const consult = `delete from likes where postid = $1 returning *`;
-    const response = await pool.query(consult, [id]);
-    console.log(`---> delete like: ${JSON.stringify(response.rows)}`);
-
-    return response.rows;
+  async deleteLike(id: string, userid: string) {
+    const consult = `delete from likes where postid = $1 & userid = $2 returning *`;
+    try {
+      const response = await pool.query(consult, [id, userid]);
+      return response.rows;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
   }
 
   async getLikes(id_post: string) {
     const consult = `select * from likes where postid = $1`;
     const response = await pool.query(consult, [id_post]);
-    console.log(`---> get likes: ${JSON.stringify(response.rows)}`);
-
     return response.rows;
   }
 }
