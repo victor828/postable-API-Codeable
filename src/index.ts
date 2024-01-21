@@ -8,7 +8,7 @@ const app = express();
 const PORT = process.env["PORT"];
 
 app.use(express.json());
-app.use("/me", routeUser);
+app.use("", routeUser);
 app.use("/", routePosts);
 app.use("/posts", likesRouter);
 
