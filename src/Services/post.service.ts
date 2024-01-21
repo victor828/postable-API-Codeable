@@ -13,24 +13,27 @@ class Posts {
   }
 
   async getByUser(user: string) {
-    const { id } = await consults_Users.getUserByName(user); //! <--- no sera necesario una vez tengamos la autentificacion neesitamos crear una variable con el id del user
-    const response = await consult_Posts.getPostUserId(id);
-    return response[0]
-      ? { ok: true, data: response }
+    const userExist = await consults_Users.getUserByName(user);
+    const response = await consult_Posts.getPostUserId(userExist.id);
+    return response
+      ? { ok: true, data: response, userName: userExist.userName }
       : { ok: false, data: response };
   }
 
-  async createPost(post: PostsModel) {
-    //! Aqui ya tenemos que tener la autentificaion para sar el id -> dentro de create estamos pasando 1 manualmente
-    const newPost = await consult_Posts.createPost(post);
+  async createPost(post: PostsModel, userId: string) {
+    const userExist = await consults_Users.getUser(userId);
+    const newPost = await consult_Posts.createPost(post, userId);
+    const likes = await consult_Likes.getLikes(newPost.id);
     return newPost
-      ? { ok: true, message: "Post created", data: newPost }
-      : { ok: false, message: "Post not created", data: null };
+      ? { ok: true, data: newPost, userName: userExist.username, likesCount: likes.length }
+      : { ok: false, data: null };
   }
 
-  async update(data: PostsModel, id: string) {
+  async update(data: PostsModel, id: string, userId: string) {
     const exist = await consult_Posts.getPostId(id);
     if (!exist) return { ok: false, message: "Post not found", data: null };
+    if (exist.userId !== userId)
+      return { ok: false, message: "Unauthorized", data: null };
     const updatedPost = await consult_Posts.updatePost(data, id);
     const likes = await consult_Likes.getLikes(id);
     return updatedPost
@@ -38,7 +41,7 @@ class Posts {
           ok: true,
           message: "Post updated",
           data: updatedPost,
-          likesCount: likes.length
+          likesCount: likes.length,
         }
       : { ok: false, message: "Post not updated", data: updatedPost };
   }
