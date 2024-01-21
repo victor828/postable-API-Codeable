@@ -7,7 +7,6 @@ class Users {
   async getAll(req: Request, res: Response) {
     const r = await service_Users.getAll();
     r.ok ? res.status(200).json({ r }) : res.status(400);
-    res.status(400).json(r);
   }
 
   // async getUser(req: Request, res: Response) {
@@ -15,14 +14,15 @@ class Users {
   // }
 
   async login(req: Request, res: Response) {
-    // const dataUser = req.body;
+    const dataUser = req.body;
+    const response = await service_Users.login(dataUser);
+    response.ok ? res.status(200).json({ response }) : res.status(400);
   }
 
   async register(req: Request, res: Response) {
     const dataUser = req.body;
     const response = await service_Users.regiser(dataUser);
     response.ok ? res.status(200).json({ response }) : res.status(400);
-    res.status(400).json(response);
   }
 }
 
