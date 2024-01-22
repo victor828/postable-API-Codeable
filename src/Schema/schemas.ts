@@ -43,6 +43,25 @@ export const users = z.object({
   lastname: z.string().min(3).optional(),
 });
 
+export const updateUsers = z.object({
+  username: z
+    .string({ description: "debe ser un string" })
+    .min(3, { message: "debe contener almenos 3 caracteres" })
+    .optional(),
+  password: z
+    .string()
+    .min(6, { message: "debe contener almenos 6 caracteres" })
+    .optional(),
+  role: z.enum(["user", "admin"]).optional(),
+  email: z
+    .string()
+    .email({ message: "debe ser un email valido" })
+    .min(10)
+    .optional(),
+  firstname: z.string().min(3).optional(),
+  lastname: z.string().min(3).optional(),
+});
+
 export const userLogin = z.object({
   username: z.string().min(3),
   password: z.string().min(6),
@@ -51,5 +70,5 @@ export const userLogin = z.object({
 //* ----------posts ------------------------
 
 export const posts = z.object({
-  content: z.string().min(3)
-})
+  content: z.string().min(3),
+});
