@@ -5,8 +5,10 @@ import { service_Post } from "../Services/post.service";
 
 class Posts {
   async getAll(req: Request, res: Response) {
+    const { page } = req.query;
+    const { limit } = req.query;
     try {
-      const post = await service_Post.getAll();
+      const post = await service_Post.getAll(page, limit);
       return post.ok ? res.status(201).json(post) : res.status(400).json(post);
     } catch (error) {
       console.log(error);

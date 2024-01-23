@@ -5,8 +5,8 @@ import { PostsModel } from "../Models/posts.model";
 // console.log(`---> service: ${id}`);
 
 class Posts {
-  async getAll() {
-    const posts = await consult_Posts.getPosts();
+  async getAll(page: any, limit: any) {
+    const posts = await consult_Posts.getPosts(page, limit);
     return posts
       ? { ok: true, message: "Posts found", data: posts }
       : { ok: false, message: "Posts not found", data: null };
@@ -24,9 +24,9 @@ class Posts {
     const userExist = await consults_Users.getUser(userId);
     const newPost = await consult_Posts.createPost(post, userId);
     const likes = await consult_Likes.getLikes(newPost.id);
-    return newPost
-      ? { ok: true, data: newPost, userName: userExist.username, likesCount: likes.length }
-      : { ok: false, data: null };
+    newPost.username = userExist.username;
+    newPost.likesCount = likes.length;
+    return newPost ? { ok: true, data: newPost } : { ok: false, data: null };
   }
 
   async update(data: PostsModel, id: string, userId: string) {

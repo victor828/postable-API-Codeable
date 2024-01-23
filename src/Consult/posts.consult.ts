@@ -2,16 +2,18 @@ import { pool } from "../Db/db";
 import { PostsModel, postModel } from "../Models/posts.model";
 // console.log(`---> consultas: ${result}`);
 class Posts {
-  async getPosts() {
+  async getPosts(page: any, limit: any) {
     // const consult = `SELECT * FROM posts ORDER BY createdat`;
     const consult = `SELECT p.*, u.username, COUNT(l.id) AS likesCount
 FROM posts AS p
 LEFT JOIN users AS u ON p.userid = u.id
 LEFT JOIN likes AS l ON l.postid = p.id
 GROUP BY p.id, u.username
-ORDER BY createdat`;
+ORDER BY createdat
+LIMIT $1
+OFFSET $2`;
     try {
-      const result = await pool.query(consult);
+      const result = await pool.query(consult, [limit, page * limit]);
       return result.rows;
     } catch (error) {
       console.log(error);
@@ -45,12 +47,12 @@ ORDER BY createdat`;
     console.log(`---> consultas: ${id}`);
     // const consult = `SELECT * FROM posts WHERE id = $1`;
     const consult = `SELECT p.*, u.username, COUNT(l.id) AS likesCount
-FROM posts AS p
-LEFT JOIN users AS u ON p.userid = u.id
-LEFT JOIN likes AS l ON l.postid = p.id
-WHERE p.id = $1
-GROUP BY p.id, u.username
-`;
+      FROM posts AS p
+      LEFT JOIN users AS u ON p.userid = u.id
+      LEFT JOIN likes AS l ON l.postid = p.id
+      WHERE p.id = $1
+      GROUP BY p.id, u.username
+      `;
     try {
       const result = await pool.query(consult, [id]);
       return result.rows[0];
