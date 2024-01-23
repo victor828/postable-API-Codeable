@@ -5,15 +5,18 @@ class Posts {
   async getPosts(page: any, limit: any) {
     // const consult = `SELECT * FROM posts ORDER BY createdat`;
     const consult = `SELECT p.*, u.username, COUNT(l.id) AS likesCount
-FROM posts AS p
-LEFT JOIN users AS u ON p.userid = u.id
-LEFT JOIN likes AS l ON l.postid = p.id
-GROUP BY p.id, u.username
-ORDER BY createdat
-LIMIT $1
-OFFSET $2`;
+      FROM posts AS p
+      LEFT JOIN users AS u ON p.userid = u.id
+      LEFT JOIN likes AS l ON l.postid = p.id
+      GROUP BY p.id, u.username
+      ORDER BY createdat
+      LIMIT $1
+      OFFSET $2`;
     try {
-      const result = await pool.query(consult, [limit, page * limit]);
+      const result = await pool.query(consult, [
+        (limit = 10),
+        (page = 0 * limit),
+      ]);
       return result.rows;
     } catch (error) {
       console.log(error);
@@ -24,15 +27,21 @@ OFFSET $2`;
     }
   }
 
-  async getPostUserId(id: string) {
+  async getPostUserId(id: string, page: any, limit: any) {
     const consult = `SELECT p.*, u.username, COUNT(l.id) AS likesCount
       FROM posts AS p
       LEFT JOIN users AS u ON p.userid = u.id
       LEFT JOIN likes AS l ON l.postid = p.id
       WHERE p.userid = $1
-      GROUP BY p.id, u.username`;
+      GROUP BY p.id, u.username
+      LIMIT $2
+      OFFSET $3`;
     try {
-      const result = await pool.query(consult, [id]);
+      const result = await pool.query(consult, [
+        id,
+        (limit = 10),
+        (page = 0 * limit),
+      ]);
       return result.rows;
     } catch (error) {
       console.log(error);
@@ -65,16 +74,22 @@ OFFSET $2`;
     }
   }
 
-  async getPostByUser(user: string) {
+  async getPostByUser(user: string, limit: any, page: any) {
     const consult = `SELECT p.*, u.username, COUNT(l.id) AS likesCount
       FROM posts AS p
       LEFT JOIN users AS u ON p.userid = u.id
       LEFT JOIN likes AS l ON l.postid = p.id
       WHERE u.username = $1
       GROUP BY p.id, u.username
+      LIMIT $2
+      OFFSET $3
       `;
     try {
-      const result = await pool.query(consult, [user]);
+      const result = await pool.query(consult, [
+        user,
+        (limit = 10),
+        (page = 0 * limit),
+      ]);
       return result.rows[0];
     } catch (error) {
       console.log(error);

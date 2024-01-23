@@ -12,9 +12,13 @@ class Posts {
       : { ok: false, message: "Posts not found", data: null };
   }
 
-  async getByUser(user: string) {
+  async getByUser(user: string, page: any, limit: any) {
     const userExist = await consults_Users.getUserByName(user);
-    const response = await consult_Posts.getPostUserId(userExist.id);
+    const response = await consult_Posts.getPostUserId(
+      userExist.id,
+      page,
+      limit
+    );
     return response
       ? { ok: true, data: response, userName: userExist.userName }
       : { ok: false, data: response };

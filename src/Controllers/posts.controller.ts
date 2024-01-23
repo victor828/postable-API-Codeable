@@ -28,7 +28,9 @@ class Posts {
 
   async getByUser(req: Request, res: Response) {
     const user = req.params["username"];
-    const data = await service_Post.getByUser(user);
+    const { page } = req.query;
+    const { limit } = req.query;
+    const data = await service_Post.getByUser(user, page, limit);
     return data.ok ? res.status(200).json(data) : res.status(400).json(data);
   }
 
