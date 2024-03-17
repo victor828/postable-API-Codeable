@@ -50,10 +50,20 @@ class Posts {
       : { ok: false, message: "Post not updated", data: updatedPost };
   }
 
-  //   async deletePost(id) {
-  //     const deletedPost = await consult_Posts.deletePost(id);
-  //     return deletedPost;
-  //   }
+    async delete(id:string, userId:string) {
+      const userExist = await consults_Users.getUser(userId);
+      if (!userExist) return { ok: false, message: "User not found", data: null };
+
+      const postExist = await consult_Posts.getPostId(id);
+      if (!postExist) return { ok: false, message: "Post not found" }
+      if(userExist.id !== postExist.userId) return { ok: false, message: "Unauthorized" }
+
+      const deleted = await consult_Posts.deletePost(id);
+      return deleted
+        ? { ok: true, message: "Post deleted" }
+        : { ok: false, message: "Post not deleted" }
+
+    }
 }
 
 export const service_Post = new Posts();

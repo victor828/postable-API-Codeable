@@ -43,6 +43,15 @@ class Posts {
       ? res.status(200).json(response)
       : res.status(400).json(response);
   }
+
+  async delete(req: Request, res: Response) {
+    const { id } = req.params
+    const userId = req.userId
+    const response = await service_Post.delete (id, userId)
+    return response.ok
+    ? res.status(200).json(response)
+    : res.status(400).json(response);
+  }
 }
 
 export const controller_Post = new Posts();

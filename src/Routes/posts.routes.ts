@@ -30,3 +30,11 @@ routePosts.patch(
   schemaValidation(posts),
   controller_Post.update
 );
+
+//* Delete the post
+routePosts.delete(
+  "/posts/:id",
+  authenticateHandler,
+  authorize("admin"),
+  controller_Post.delete
+);

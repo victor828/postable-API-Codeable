@@ -127,10 +127,10 @@ class Posts {
     }
   }
 
-  async deletePost(data: PostsModel) {
+  async deletePost(id: string) {
     const consult = `DELETE FROM posts WHERE id = $1`;
     try {
-      const result = await pool.query(consult, [data.id]);
+      const result = await pool.query(consult, [id]);
       return result.rows[0];
     } catch (error) {
       console.error("Error al ejecutar la consulta:", error);
