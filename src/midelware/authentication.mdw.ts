@@ -33,7 +33,7 @@ export function authenticateHandler(
       exp: number;
     };
 
-    console.log("desde el midelware --> ", payload);
+    // console.log("desde el midelware --> ", payload);
 
     req.userId = payload.userId;
     req.userRole = payload.userRole;
