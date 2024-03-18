@@ -1,25 +1,27 @@
-// const { describe, expect, mockRequest, mockResponse } = require("node:test");
-// import { routePosts } from "../src/Routes/posts.routes";
-// import { test } from "vitest";
+import { expect, test } from 'vitest';
+import { consults_Users } from '../src/Consult/users.consults';
 
+const mockGetUser = async (user_id: string) => {
+  if (user_id === '1') {
+    return { username: 'admin', password: '123456' };
+  } else {
+    return null;
+  }
+};
 
-// describe("routePosts.get", () => {
-//   test("should return a 200 status code", async () => {
-//     const req = mockRequest();
-//     const res = mockResponse();
+const originalGetUser = consults_Users.getUser;
+consults_Users.getUser = mockGetUser;
 
-//     routePosts.get(req, res);
+test('getUser should return user data if user exists', async () => {
+const result = await consults_Users.getUser('1');
+  expect(result.ok).toBe(true);
+  expect(result.data).toEqual({ username: 'admin', password: '123456' });
+});
 
-//     expect(res.status).toBe(200);
-//   });
+test('getUser should return an error message if user does not exist', async () => {
+  const result = await consults_Users.getUser('1000');
+  expect(result.ok).toBe(false);
+  expect(result.message).toBe('usuario no existe');
+});
 
-//   test("should return a list of posts", async () => {
-//     const req = mockRequest();
-//     const res = mockResponse();
-
-//     routePosts.get(req, res);
-
-//     expect(res.json).toBeDefined();
-//     expect(res.json.length).toBeGreaterThan(0);
-//   });
-// });
+consults_Users.getUser = originalGetUser;

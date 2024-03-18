@@ -19,7 +19,7 @@ class UsersConsults {
       console.log(error);
       return {
         ok: false,
-        message: "Error: " + error,
+        message: "usuario no existe"
       };
     }
   }

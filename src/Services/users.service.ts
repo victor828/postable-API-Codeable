@@ -15,7 +15,6 @@ class Users {
 
   async getUser(user_id: string) {
     const response = await consults_Users.getUser(user_id);
-    // necesitamos eliminar la key para que ya no se quede cargando, manejando un error podriamos solucionarlo tambien
     return response
       ? { ok: true, data: response }
       : { ok: false, message: "usuario no existe" };
